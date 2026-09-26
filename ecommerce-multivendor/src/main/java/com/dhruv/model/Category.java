@@ -1,2 +1,4 @@
-package com.dhruv.model;public class Category {
+package com.dhruv.model;
+
+public class Category {
 }
