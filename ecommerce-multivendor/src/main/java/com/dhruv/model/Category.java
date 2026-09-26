@@ -25,5 +25,5 @@ public class Category {
     private Category parentCategory;
 
     @NotNull
-    private Integer level;
+    private Integer level; // level means:- male, female, child
 }
