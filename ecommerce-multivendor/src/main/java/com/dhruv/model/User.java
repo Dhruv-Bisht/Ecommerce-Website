@@ -1,11 +1,9 @@
 package com.dhruv.model;
 
 import com.dhruv.domain.USER_ROLE;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
@@ -32,7 +30,15 @@ public class User {
 
     private USER_ROLE role = USER_ROLE.ROLE_CUSTOMER;
 
+    /*
+    * @OneToMany / @ManyToOne
+    * @ManyToMany
+    * @OneToOne
+    * */
+    @OneToMany
     private Set<Address> addresses = new HashSet<>();
 
+    @ManyToMany
+    @JsonIgnore // This data will not be fetched from frontend
     private Set<Coupon> usedCoupons = new HashSet<>(); // if coupon is used not to allow them again.
 }
