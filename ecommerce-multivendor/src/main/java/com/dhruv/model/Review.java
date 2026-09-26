@@ -1,2 +1,4 @@
-package com.dhruv.model;public class Review {
+package com.dhruv.model;
+
+public class Review {
 }
