@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    @PostMapping
+    @PostMapping("/signup")
     public ResponseEntity<User> createUserHandler(@RequestBody SignupRequest req){
+
 
         User user = new User();
         user.setEmail(req.getEmail());
