@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@Table(name = "orders")
 public class Order {
     @Id // it means Primary key. because every user must have a uinque Id.
     @GeneratedValue(strategy = GenerationType.AUTO)  // Spring Boot will generate the ID automatically.

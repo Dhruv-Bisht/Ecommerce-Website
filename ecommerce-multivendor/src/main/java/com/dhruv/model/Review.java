@@ -27,12 +27,10 @@ public class Review {
 
     @JsonIgnore
     @ManyToOne
-    @Column(nullable = false)
     private Product product;
 
     @ManyToOne
     // instead of nullable = false we can use @NotNull
-    @Column(nullable = false)
     private User user;
 
     @Column(nullable = false)

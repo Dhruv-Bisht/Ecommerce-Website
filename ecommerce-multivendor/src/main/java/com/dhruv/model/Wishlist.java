@@ -20,6 +20,6 @@ public class Wishlist {
     @OneToOne
     private User user; // one user has one wishlist.
 
-    @ManyToOne
+    @ManyToMany
     private Set<Product> products = new HashSet<>();
 }
