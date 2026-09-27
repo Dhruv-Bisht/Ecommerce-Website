@@ -1,8 +1,10 @@
 package com.dhruv.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -10,26 +12,14 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class OrderItem {
+public class Wishlist {
     @Id // it means Primary key. because every user must have a uinque Id.
     @GeneratedValue(strategy = GenerationType.AUTO)  // Spring Boot will generate the ID automatically.
     private Long id;
 
-    @JsonIgnore
-    @ManyToOne
-    private Order order;
+    @OneToOne
+    private User user; // one user has one wishlist.
 
     @ManyToOne
-    private Product product;
-
-    private String size; // Xl, L, S, M
-
-    private int quantity; // 1,2,3
-
-    private Integer mrpPrice;
-
-    private Integer sellingPrice;
-
-    private Long userId;
-
+    private Set<Product> products = new HashSet<>();
 }

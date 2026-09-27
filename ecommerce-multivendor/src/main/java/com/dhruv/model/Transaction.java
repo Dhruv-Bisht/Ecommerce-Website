@@ -1,8 +1,9 @@
 package com.dhruv.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -10,26 +11,20 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class OrderItem {
+public class Transaction {
     @Id // it means Primary key. because every user must have a uinque Id.
     @GeneratedValue(strategy = GenerationType.AUTO)  // Spring Boot will generate the ID automatically.
     private Long id;
 
-    @JsonIgnore
     @ManyToOne
+    private User customer;
+
+    @OneToOne
     private Order order;
 
     @ManyToOne
-    private Product product;
+    private Seller seller;
 
-    private String size; // Xl, L, S, M
-
-    private int quantity; // 1,2,3
-
-    private Integer mrpPrice;
-
-    private Integer sellingPrice;
-
-    private Long userId;
+    private LocalDateTime data = LocalDateTime.now();
 
 }

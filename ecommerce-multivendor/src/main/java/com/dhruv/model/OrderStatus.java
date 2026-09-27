@@ -1,4 +1,4 @@
-package com.dhruv.domain;
+package com.dhruv.model;
 
 public enum OrderStatus {
     PENDING,

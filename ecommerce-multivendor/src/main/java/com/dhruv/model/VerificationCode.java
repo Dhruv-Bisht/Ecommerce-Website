@@ -1,6 +1,5 @@
 package com.dhruv.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,26 +9,19 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class OrderItem {
+public class VerificationCode {
     @Id // it means Primary key. because every user must have a uinque Id.
     @GeneratedValue(strategy = GenerationType.AUTO)  // Spring Boot will generate the ID automatically.
     private Long id;
 
-    @JsonIgnore
-    @ManyToOne
-    private Order order;
+    private String otp;
 
-    @ManyToOne
-    private Product product;
+    private String email;
 
-    private String size; // Xl, L, S, M
+    @OneToOne
+    private User user;
 
-    private int quantity; // 1,2,3
-
-    private Integer mrpPrice;
-
-    private Integer sellingPrice;
-
-    private Long userId;
+    @OneToOne
+    private Seller seller;
 
 }
