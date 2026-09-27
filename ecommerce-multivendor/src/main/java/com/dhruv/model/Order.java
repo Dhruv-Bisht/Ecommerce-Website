@@ -1,5 +1,7 @@
 package com.dhruv.model;
 
+import com.dhruv.domain.OrderStatus;
+import com.dhruv.domain.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

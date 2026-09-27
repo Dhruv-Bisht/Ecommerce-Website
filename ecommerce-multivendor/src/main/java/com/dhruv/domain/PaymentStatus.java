@@ -1,4 +1,4 @@
-package com.dhruv.model;
+package com.dhruv.domain;
 
 public enum PaymentStatus {
     PENDING,
