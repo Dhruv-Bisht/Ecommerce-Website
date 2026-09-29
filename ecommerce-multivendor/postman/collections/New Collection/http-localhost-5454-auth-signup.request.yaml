@@ -1,0 +1,15 @@
+$kind: http-request
+name: http://localhost:5454/auth/signup
+description: ""
+url: http://localhost:5454/auth/signup
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"fullName\":\"dhruv\",\r
+
+    \    \"email\":\"dhruv123@gmail.com\"\r
+
+    }"
+order: 1790573466613
