@@ -83,6 +83,6 @@ public class JwtTokenValidator extends OncePerRequestFilter {
         // Continue the request
         filterChain.doFilter(request, response);
 
-        
+
     }
 }

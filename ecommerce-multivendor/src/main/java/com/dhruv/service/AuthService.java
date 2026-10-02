@@ -1,4 +1,10 @@
 package com.dhruv.service;
 
-public class AuthService {
+import com.dhruv.model.User;
+import com.dhruv.response.SignupRequest;
+
+public interface AuthService {
+    String createUser(SignupRequest req);
+
+
 }
