@@ -2,11 +2,14 @@ package com.dhruv.controller;
 
 import com.dhruv.domain.USER_ROLE;
 import com.dhruv.model.User;
+import com.dhruv.model.VerificationCode;
 import com.dhruv.repository.UserRepository;
+import com.dhruv.response.ApiResponse;
 import com.dhruv.response.AuthResponse;
 import com.dhruv.response.SignupRequest;
 import com.dhruv.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +20,7 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final AuthService authService;
+    @SneakyThrows
     @PostMapping("/signup") // Post Mapping means we are adding data in the DATABASE.
     public ResponseEntity<AuthResponse> createUserHandler(@RequestBody SignupRequest req){
 
@@ -28,4 +32,14 @@ public class AuthController {
 
         return ResponseEntity.ok(res);
     }
+    @PostMapping("/sent/login-signup-otp") // Post Mapping means we are adding data in the DATABASE.
+    public ResponseEntity<ApiResponse> sentOtpHandler(@RequestBody VerificationCode req){
+
+        String jwt = authService.sentLoginOtp(req.get);
+        ApiResponse res = new ApiResponse();
+
+        res.setMessage("Otp sent Successfully");
+        return ResponseEntity.ok(res);
+    }
+
 }

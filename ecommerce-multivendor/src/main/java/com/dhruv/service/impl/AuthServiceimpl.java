@@ -4,10 +4,14 @@ import com.dhruv.config.JwtProvider;
 import com.dhruv.domain.USER_ROLE;
 import com.dhruv.model.Cart;
 import com.dhruv.model.User;
+import com.dhruv.model.VerificationCode;
 import com.dhruv.repository.CartRepository;
 import com.dhruv.repository.UserRepository;
+import com.dhruv.repository.VerificationCodeRepository;
 import com.dhruv.response.SignupRequest;
 import com.dhruv.service.AuthService;
+import com.dhruv.service.EmailService;
+import com.dhruv.utils.OtpUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,9 +32,55 @@ public class AuthServiceimpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final CartRepository cartRepository;
     private final JwtProvider jwtProvider;
+    private final VerificationCodeRepository verificationCodeRepository;
+    private final EmailService emailService;
+    @Override
+    public void sentLoginOtp(String email) throws Exception {
+        String SINGING_PREFIX = "singing_";
+
+        if(email.startsWith(SINGING_PREFIX)){
+            email = email.substring(SINGING_PREFIX.length());
+
+            User user = userRepository.findByEmail(email);
+            if(user == null){
+                throw new Exception("user not exist with provided email");
+            }
+            VerificationCode isExist = verificationCodeRepository.findByEmail(email);
+
+            if(isExist != null){
+                verificationCodeRepository.delete(isExist);
+            }
+
+            String otp = OtpUtil.generateOtp();
+
+            VerificationCode verificationCode = new VerificationCode();
+            verificationCode.setOtp(otp);
+            verificationCode.setEmail(email);
+            verificationCodeRepository.save(verificationCode);
+
+            String subject = "Dhruv ecom login/singup otp";
+            String text = "Your login/singup otp is - ";
+
+            emailService.sendVerificationOtpEmail(email, otp, subject, text);
+
+
+
+        }
+
+    }
 
     @Override
-    public String createUser(SignupRequest req){
+    public String createUser(SignupRequest req) throws Exception {
+
+
+        VerificationCode verificationCode = verificationCodeRepository.findByEmail(req.getEmail());
+        // if verification code is not present in the db.
+        if(verificationCode == null || !verificationCode.getOtp().equals(req.getOtp())){
+            throw new Exception("Wrong otp...");
+        }
+
+
+
         User user = userRepository.findByEmail(req.getEmail());
         if(user == null){
             User createdUser = new User();
