@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class VerificationCode {
+
     @Id // it means Primary key. because every user must have a uinque Id.
     @GeneratedValue(strategy = GenerationType.AUTO)  // Spring Boot will generate the ID automatically.
     private Long id;

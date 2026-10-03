@@ -56,6 +56,7 @@ public class AppConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
     public RestTemplate restTemplate(){
         return new RestTemplate();
     }

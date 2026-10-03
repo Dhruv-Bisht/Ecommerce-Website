@@ -1,7 +1,6 @@
 package com.dhruv.controller;
 
 import com.dhruv.domain.USER_ROLE;
-import com.dhruv.model.User;
 import com.dhruv.model.VerificationCode;
 import com.dhruv.repository.UserRepository;
 import com.dhruv.response.ApiResponse;
@@ -9,22 +8,22 @@ import com.dhruv.response.AuthResponse;
 import com.dhruv.response.SignupRequest;
 import com.dhruv.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth") // Map with Request in the AUTH.
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
     private final UserRepository userRepository;
     private final AuthService authService;
-    @SneakyThrows
-    @PostMapping("/signup") // Post Mapping means we are adding data in the DATABASE.
-    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody SignupRequest req){
+
+    @PostMapping("/signup")
+    public ResponseEntity<AuthResponse> createUserHandler(
+            @RequestBody SignupRequest req) throws Exception {
 
         String jwt = authService.createUser(req);
+
         AuthResponse res = new AuthResponse();
         res.setJwt(jwt);
         res.setMessage("Register Success.");
@@ -32,14 +31,15 @@ public class AuthController {
 
         return ResponseEntity.ok(res);
     }
-    @PostMapping("/sent/login-signup-otp") // Post Mapping means we are adding data in the DATABASE.
-    public ResponseEntity<ApiResponse> sentOtpHandler(@RequestBody VerificationCode req){
 
-        String jwt = authService.sentLoginOtp(req.get);
+    @PostMapping("/send/login-signup-otp")
+    public ResponseEntity<ApiResponse> sendOtpHandler(
+            @RequestBody VerificationCode req) throws Exception {
+
+        authService.sentLoginOtp(req.getEmail());
         ApiResponse res = new ApiResponse();
+        res.setMessage("OTP sent successfully");
 
-        res.setMessage("Otp sent Successfully");
         return ResponseEntity.ok(res);
     }
-
 }

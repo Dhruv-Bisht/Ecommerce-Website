@@ -20,7 +20,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,38 +34,34 @@ public class AuthServiceimpl implements AuthService {
     private final VerificationCodeRepository verificationCodeRepository;
     private final EmailService emailService;
     @Override
-    public void sentLoginOtp(String email) throws Exception {
-        String SINGING_PREFIX = "singing_";
+    public String sentLoginOtp(String email) throws Exception {
 
-        if(email.startsWith(SINGING_PREFIX)){
-            email = email.substring(SINGING_PREFIX.length());
+        VerificationCode existingCode =
+                verificationCodeRepository.findByEmail(email);
 
-            User user = userRepository.findByEmail(email);
-            if(user == null){
-                throw new Exception("user not exist with provided email");
-            }
-            VerificationCode isExist = verificationCodeRepository.findByEmail(email);
-
-            if(isExist != null){
-                verificationCodeRepository.delete(isExist);
-            }
-
-            String otp = OtpUtil.generateOtp();
-
-            VerificationCode verificationCode = new VerificationCode();
-            verificationCode.setOtp(otp);
-            verificationCode.setEmail(email);
-            verificationCodeRepository.save(verificationCode);
-
-            String subject = "Dhruv ecom login/singup otp";
-            String text = "Your login/singup otp is - ";
-
-            emailService.sendVerificationOtpEmail(email, otp, subject, text);
-
-
-
+        if (existingCode != null) {
+            verificationCodeRepository.delete(existingCode);
         }
 
+        String otp = OtpUtil.generateOtp();
+
+        VerificationCode verificationCode = new VerificationCode();
+        verificationCode.setOtp(otp);
+        verificationCode.setEmail(email);
+
+        verificationCodeRepository.save(verificationCode);
+
+        String subject = "Dhruv Ecom Login/Signup OTP";
+        String text = "Your login/signup OTP is - " + otp;
+
+        emailService.sendVerificationOtpEmail(
+                email,
+                otp,
+                subject,
+                text
+        );
+
+        return "OTP sent successfully";
     }
 
     @Override

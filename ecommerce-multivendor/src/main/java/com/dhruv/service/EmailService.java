@@ -8,22 +8,33 @@ import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.mail.javamail.MimeMessageHelper;
+
 @Service
 @RequiredArgsConstructor
 public class EmailService {
+
     private final JavaMailSender javaMailSender;
 
-    public void sendVerificationOtpEmail(String userEmail, String otp, String subject, String text) throws MessagingException {
-        try{
+    public void sendVerificationOtpEmail(
+            String userEmail,
+            String otp,
+            String subject,
+            String text) throws MessagingException {
+
+        try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-            mimeMessageHelper.setSubject(subject);
-            mimeMessageHelper.setText(text);
-            mimeMessageHelper.setTo(userEmail);
-        }
-        catch(MailException e){
-            throw new MailSendException("failed to send email");
+
+            MimeMessageHelper helper =
+                    new MimeMessageHelper(mimeMessage, true);
+
+            helper.setTo(userEmail);
+            helper.setSubject(subject);
+            helper.setText(text);
+
+            javaMailSender.send(mimeMessage);
+
+        } catch (MailException e) {
+            throw new MailSendException("Failed to send email", e);
         }
     }
 }
