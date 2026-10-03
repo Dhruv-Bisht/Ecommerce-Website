@@ -8,20 +8,25 @@ import com.dhruv.model.VerificationCode;
 import com.dhruv.repository.CartRepository;
 import com.dhruv.repository.UserRepository;
 import com.dhruv.repository.VerificationCodeRepository;
+import com.dhruv.request.LoginRequest;
+import com.dhruv.response.AuthResponse;
 import com.dhruv.response.SignupRequest;
 import com.dhruv.service.AuthService;
 import com.dhruv.service.EmailService;
 import com.dhruv.utils.OtpUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -33,6 +38,9 @@ public class AuthServiceimpl implements AuthService {
     private final JwtProvider jwtProvider;
     private final VerificationCodeRepository verificationCodeRepository;
     private final EmailService emailService;
+    private final CustomUserServiceImpl customUserService;
+
+
     @Override
     public String sentLoginOtp(String email) throws Exception {
 
@@ -97,5 +105,46 @@ public class AuthServiceimpl implements AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return jwtProvider.generateToken(authentication);
+    }
+
+    @Override
+    public AuthResponse signing(LoginRequest req) {
+        String username = req.getEmail();
+        String otp = req.getOtp();
+
+        Authentication authentication = authenticate(username, otp);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String token = jwtProvider.generateToken(authentication);
+
+        AuthResponse authResponse = new AuthResponse();
+        authResponse.setJwt(token);
+        authResponse.setMessage("Login Success");
+
+        Collection<?extends GrantedAuthority> authorities = authentication.getAuthorities();
+        String roleName = authorities.isEmpty()?null:authorities.iterator().next().getAuthority();
+
+        authResponse.setRole(USER_ROLE.valueOf(roleName));
+
+
+        return authResponse;
+    }
+
+    private Authentication authenticate(String username, String otp) {
+//        we will verify otp
+
+        UserDetails userDetails = customUserService.loadUserByUsername(username);
+        if(userDetails == null){
+            throw new BadCredentialsException("Invalid username or password");
+        }
+
+        VerificationCode verificationCode = verificationCodeRepository.findByEmail(username);
+        if (verificationCode == null || !verificationCode.getOtp().equals(otp)){
+            throw new BadCredentialsException("Wrong OTP");
+        }
+
+
+
+        return new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
     }
 }
