@@ -18,8 +18,6 @@ public class UserServiceimpl implements UserService {
     @Override
     public User findUserByJwtToken(String jwt) throws Exception {
         String email = jwtProvider.getEmailFromJwtToken(jwt);
-        User user = this.findUserByEmail(email);
-
         return this.findUserByEmail(email);
     }
 
@@ -31,6 +29,6 @@ public class UserServiceimpl implements UserService {
             throw new Exception("User not found with email - "+email);
         }
 
-        return null;
+        return user;
     }
 }

@@ -8,19 +8,22 @@ import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
+
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
-    @Id // it means Primary key. because every user must have a uinque Id.
-    @GeneratedValue(strategy = GenerationType.AUTO)  // Spring Boot will generate the ID automatically.
-    private Long id;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // when details will be fetched password details will not be fetched.
-    private String password;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @EqualsAndHashCode.Include
+    private Long id;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
 
     private String email;
 
@@ -30,15 +33,10 @@ public class User {
 
     private USER_ROLE role = USER_ROLE.ROLE_CUSTOMER;
 
-    /*
-    * @OneToMany / @ManyToOne
-    * @ManyToMany
-    * @OneToOne
-    * */
     @OneToMany
     private Set<Address> addresses = new HashSet<>();
 
     @ManyToMany
-    @JsonIgnore // This data will not be fetched from frontend
-    private Set<Coupon> usedCoupons = new HashSet<>(); // if coupon is used not to allow them again.
+    @JsonIgnore
+    private Set<Coupon> usedCoupons = new HashSet<>();
 }
