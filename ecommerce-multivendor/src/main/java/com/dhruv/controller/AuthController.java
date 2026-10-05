@@ -3,6 +3,7 @@ package com.dhruv.controller;
 import com.dhruv.domain.USER_ROLE;
 import com.dhruv.model.VerificationCode;
 import com.dhruv.repository.UserRepository;
+import com.dhruv.request.LoginOtpRequest;
 import com.dhruv.request.LoginRequest;
 import com.dhruv.response.ApiResponse;
 import com.dhruv.response.AuthResponse;
@@ -35,9 +36,9 @@ public class AuthController {
 
     @PostMapping("/send/login-signup-otp")
     public ResponseEntity<ApiResponse> sendOtpHandler(
-            @RequestBody VerificationCode req) throws Exception {
+            @RequestBody LoginOtpRequest req) throws Exception {
 
-        authService.sentLoginOtp(req.getEmail());
+        authService.sentLoginOtp(req.getEmail(), req.getRole());
         ApiResponse res = new ApiResponse();
         res.setMessage("OTP sent successfully");
 

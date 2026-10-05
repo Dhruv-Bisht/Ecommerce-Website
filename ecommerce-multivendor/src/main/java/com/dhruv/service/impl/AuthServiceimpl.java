@@ -3,9 +3,11 @@ package com.dhruv.service.impl;
 import com.dhruv.config.JwtProvider;
 import com.dhruv.domain.USER_ROLE;
 import com.dhruv.model.Cart;
+import com.dhruv.model.Seller;
 import com.dhruv.model.User;
 import com.dhruv.model.VerificationCode;
 import com.dhruv.repository.CartRepository;
+import com.dhruv.repository.SellerRepository;
 import com.dhruv.repository.UserRepository;
 import com.dhruv.repository.VerificationCodeRepository;
 import com.dhruv.request.LoginRequest;
@@ -39,35 +41,56 @@ public class AuthServiceimpl implements AuthService {
     private final VerificationCodeRepository verificationCodeRepository;
     private final EmailService emailService;
     private final CustomUserServiceImpl customUserService;
+    private SellerRepository sellerRepository;
 
 
     @Override
-    public String sentLoginOtp(String email) throws Exception {
+    public String sentLoginOtp(String email, USER_ROLE role) throws Exception {
+        String SIGNING_PREFIX = "signin_";
+        String SELLER_PREFIX = "seller_";
 
-        VerificationCode existingCode =
-                verificationCodeRepository.findByEmail(email);
+//        VerificationCode existingCode =
+//                verificationCodeRepository.findByEmail(email);
+//
+//        if (existingCode != null) {
+//            verificationCodeRepository.delete(existingCode);
+//        }
+//
+//        String otp = OtpUtil.generateOtp();
+//
+//        VerificationCode verificationCode = new VerificationCode();
+//        verificationCode.setOtp(otp);
+//        verificationCode.setEmail(email);
+//
+//        verificationCodeRepository.save(verificationCode);
+//
+//        String subject = "Dhruv Ecom Login/Signup OTP";
+//        String text = "Your login/signup OTP is - " + otp;
+//
+//        emailService.sendVerificationOtpEmail(
+//                email,
+//                otp,
+//                subject,
+//                text
+//        );
 
-        if (existingCode != null) {
-            verificationCodeRepository.delete(existingCode);
+        if(email.startsWith(SIGNING_PREFIX)){
+            email = email.substring(SIGNING_PREFIX.length());
+
+            if(role.equals(USER_ROLE.ROLE_SELLER)){
+                Seller seller = sellerRepository.findByEmail(email);
+                if(seller == null){
+                    throw new Exception("user not exist with provided email.");
+                }
+            }
+            else{
+                User user = userRepository.findByEmail(email);
+                if(user == null){
+                    throw new Exception("Seller not found");
+                }
+            }
+
         }
-
-        String otp = OtpUtil.generateOtp();
-
-        VerificationCode verificationCode = new VerificationCode();
-        verificationCode.setOtp(otp);
-        verificationCode.setEmail(email);
-
-        verificationCodeRepository.save(verificationCode);
-
-        String subject = "Dhruv Ecom Login/Signup OTP";
-        String text = "Your login/signup OTP is - " + otp;
-
-        emailService.sendVerificationOtpEmail(
-                email,
-                otp,
-                subject,
-                text
-        );
 
         return "OTP sent successfully";
     }
